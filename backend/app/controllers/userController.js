@@ -8,7 +8,7 @@ const logger = require('./../libs/loggerLib');
 const validationLib = require('./../libs/validationLib');
 const passwordLib = require('./../libs/passwordLib');
 const tokenLib = require('./../libs/tokenLib');
-const eventEmitter = require('./../libs/eventLib');
+const eventEmitter = require('./../libs/eventLib').eventEmitter;
 
 // importing mongo models
 const User = mongoose.model('User');
@@ -55,6 +55,56 @@ let signup = function (req, res) {
     };
 
     // saving user data into database
+    let createUser = function () {
+        return new Promise((resolve, reject) => {
+            let user = new User({
+                email: req.body.email,
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                userId: shortId.generate(),
+                password: passwordLib.encryptPassword(req.body.password)
+            });
+            
+            user.save((err, result) => {
+                if (err) {
+                    let apiResponse;
+                    if (err.name == 'ValidaionError') {
+                        apiResponse = response.generate(true, err.message, 403, null);
+                    } else {
+                        apiResponse = response.generate(true, 'Internal Server Error.', 500, null);
+                    }
+                    reject(apiResponse);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    };
+
+    verifyUserInput()
+        .then(checkExistingUser)
+        .then(createUser)
+        .then((userData) => {
+            // let data = {
+            //     id: userData.userId,
+            //     firstname: userData.firstname,
+            //     lastname: userData.lastname,
+            //     email: userData.email
+            // }
+
+            // sending email for signup
+            eventEmitter.emit('signupEmail', userData.email, userData.firstname);
+
+            let apiResponse = response.generate(false, 'User registered successfully', 200, null);
+            res.send(apiResponse);
+        })
+        .catch((err) => {
+            res.send(err);
+        });
+};
+
+module.exports = {
+    signup: signup
 };
 
 
