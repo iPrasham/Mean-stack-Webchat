@@ -9,7 +9,7 @@ const chat = require('./../controllers/chatController');
 const eventEmitter = new EventEmitter();
 
 eventEmitter.on('sendEmail', mailer.sendEmail);
-eventEmitter.on('signupmail', mailer.signUpEmail);
+eventEmitter.on('signupE`mail', mailer.signUpEmail);
 eventEmitter.on('forgotPassEmail', mailer.forgotPassEmail);
 eventEmitter.on('saveChat', chat.saveChat);
 
