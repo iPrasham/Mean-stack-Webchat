@@ -195,7 +195,7 @@ let forgotPassword = function () {
     let userData;
 
     let findUser = function () {
-        return new Promise((resolve, reject) = {
+        return new Promise((resolve, reject) => {
             User.findOne({ email: req.body.email })
                 .select('userId firstname lastname email')
                 .exec((err, result) => {
