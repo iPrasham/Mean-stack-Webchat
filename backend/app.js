@@ -35,6 +35,14 @@ app.use(express.static(path.join(__dirname, 'client')));
 app.use(routeLogger.logIp);
 app.use(errorHandlers.globalErrorHandler);
 
+// importing mongoose models
+let modelPath = './app/models';
+fs.readdirSync(modelPath).forEach((file) => {
+    if (file.indexOf('.js') >= 0) {
+        require(modelPath + '/' + file);
+    }
+});
+
 // routing imports
 let routePath = './app/routes';
 fs.readdirSync(routePath).forEach((file) => {

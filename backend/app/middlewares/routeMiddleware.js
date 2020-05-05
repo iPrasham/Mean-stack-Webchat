@@ -69,7 +69,7 @@ let verifyPassResetToken = function (req, res, next) {
             });
     } else {
         let apiResponse = response.generate(true, 'Auth token missing', 403, null);
-        res.send(apiResponse;)
+        res.send(apiResponse);
     }
 };
 

@@ -26,7 +26,7 @@ let signup = function (req, res) {
             }
 
             if(req.body.password == undefined || !validationLib.isValidPassword(req.body.password)) {
-                let apiResponse = response.generate(true, "Invalid password pattern.Password should be minimum 8 characters and start with an alphabet or a number", 403, null);
+                let apiResponse = response.generate(true, "Invalid password pattern. Password should be minimum 8 characters and start with an alphabet or a number", 403, null);
                 reject(apiResponse);
             }
 
