@@ -15,6 +15,9 @@ let setRoutes = function (app) {
 
     // signup route
     app.post(baseUrl + '/signup', userController.signup);
+
+    // login route
+    app.post(baseUrl + '/login', userController.login);
 }
 
 module.exports = {
