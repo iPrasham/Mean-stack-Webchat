@@ -18,6 +18,9 @@ let setRoutes = function (app) {
 
     // login route
     app.post(baseUrl + '/login', userController.login);
+
+    // forgot password url
+    app.post(baseUrl + '/forgot-password', userController.forgotPassword);
 }
 
 module.exports = {

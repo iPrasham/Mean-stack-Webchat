@@ -190,9 +190,75 @@ let login = function (req, res) {
         });
 };
 
+
+let forgotPassword = function () {
+    let userData;
+
+    let findUser = function () {
+        return new Promise((resolve, reject) = {
+            User.findOne({ email: req.body.email })
+                .select('userId firstname lastname email')
+                .exec((err, result) => {
+                    if (err) {
+                        let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                        reject(apiResponse);
+                    } else if (result) {
+                        userData = result;
+                        delete result._id;
+                        resolve(result);
+                    } else {
+                        let apiResponse = response.generate(true, 'This email is not registered', 403, null);
+                        reject(apiResponse);
+                    }
+                })
+        });
+    };
+
+    let generateToken = function (userData) {
+        return new Promise((resolve, reject) => {
+            tokenLib.generateToken(userData, (err, token) => {
+                if (err) {
+                    let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                    reject(apiResponse);
+                } else {
+                    resolve(token);
+                }
+            }, true);
+        });
+    };
+
+    let saveResetToken = function (token) {
+        return new Promise((resolve, reject) => {
+            User.updateOne({ email: req.body.email }, { passwordResetToken: token })
+                .exec((err, result) => {
+                    if (err) {
+                        let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                        reject(apiResponse);
+                    } else {
+                        resolve(token);
+                    }
+                });
+        });
+    };
+
+    findUser()
+        .then(generateToken)
+        .then(saveResetToken)
+        .then((token) => {
+            eventEmitter.emit('forgotPassEmail', userData.email, token);
+            let apiResponse = response.generate(false, 'Password reset email sent.', 200, null);
+            res.send(apiResponse);
+        })
+        .catch((err) => {
+            res.send(err);
+        });
+
+};
+
 module.exports = {
     signup: signup,
-    login: login
+    login: login,
+    forgotPassword: forgotPassword
 };
 
 
