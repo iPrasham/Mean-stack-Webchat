@@ -15,6 +15,12 @@ let setRoutes = function (app) {
 
     // signup route
     app.post(baseUrl + '/signup', userController.signup);
+
+    // login route
+    app.post(baseUrl + '/login', userController.login);
+
+    // forgot password url
+    app.post(baseUrl + '/forgot-password', userController.forgotPassword);
 }
 
 module.exports = {

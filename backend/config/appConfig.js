@@ -2,7 +2,7 @@ const config = {};
 
 config.port = 3000;
 config.database = {
-    url: "mongodb:127.0.0.1:27017/webchat"
+    url: "mongodb://127.0.0.1:27017/webchat"
 }
 config.allowedOrigins = "*";
 config.version = "/api/v1";

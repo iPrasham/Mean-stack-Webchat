@@ -26,7 +26,7 @@ let signup = function (req, res) {
             }
 
             if(req.body.password == undefined || !validationLib.isValidPassword(req.body.password)) {
-                let apiResponse = response.generate(true, "Invalid password pattern.Password should be minimum 8 characters and start with an alphabet or a number", 403, null);
+                let apiResponse = response.generate(true, "Invalid password pattern. Password should be minimum 8 characters and start with an alphabet or a number", 403, null);
                 reject(apiResponse);
             }
 
@@ -103,8 +103,162 @@ let signup = function (req, res) {
         });
 };
 
+
+let login = function (req, res) {
+    let userData;
+
+    let validateAndFind = function () {
+        return new Promise((resolve, reject) => {
+            if(req.body.email && req.body.password) {
+                User.findOne({ email: req.body.email})
+                    .select("firstname lastname email userId password")
+                    .lean()
+                    .exec((err, result) => {
+                        if (err) {
+                            let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                            reject(apiResponse);
+                        } else if (result) {
+                            passwordLib.comparePassword(req.body.password, result.password, (err, match) => {
+                                if (err) {
+                                    let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                                    reject(apiResponse);
+                                } else if (!match) {
+                                    let apiResponse = response.generate(true, 'Invalid credentials', 403, null);
+                                    reject(apiResponse);
+                                } else {
+                                    delete result.password;
+                                    delete result._id;
+                                    userData = result;
+                                    resolve(result);
+                                }
+                            });
+                        }
+                        else {
+                            let apiResponse = response.generate(true, 'Email not registered', 403, null);
+                            reject(apiResponse);
+                        }
+                    });
+            } else {
+                let apiResponse = response.generate(true, 'Email/password missing', 403, null);
+                reject(apiResponse);
+            }
+        });
+    };
+
+    let getToken = function (userData) {
+        return new Promise((resolve, reject) => {
+            tokenLib.generateToken(userData, (err, token) => {
+                if (err) {
+                    let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                    reject(apiResponse);
+                } else {
+                    resolve(token);
+                }
+            });
+        });
+    };
+
+    let saveToken = function (token) {
+        return new Promise((reject, resolve) => {
+            let auth = new Auth({
+                authToken: token
+            });
+
+            auth.save((err, result) => {
+                if (err) {
+                    let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                    reject(apiResponse);
+                } else {
+                    resolve(token);
+                }
+            }); 
+        });
+    };
+
+    validateAndFind()
+        .then(getToken)
+        .then(saveToken)
+        .then((token) => {
+            let apiResponse = response.generate(false, 
+                                                'User logged in',
+                                                200,
+                                                { authToken: token, userId: userData.userId, firstname: userData.firstname, lastname: userData.lastname });
+            res.send(apiResponse);
+        })
+        .catch((err) => {
+            res.send(err);
+        });
+};
+
+
+let forgotPassword = function () {
+    let userData;
+
+    let findUser = function () {
+        return new Promise((resolve, reject) => {
+            User.findOne({ email: req.body.email })
+                .select('userId firstname lastname email')
+                .exec((err, result) => {
+                    if (err) {
+                        let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                        reject(apiResponse);
+                    } else if (result) {
+                        userData = result;
+                        delete result._id;
+                        resolve(result);
+                    } else {
+                        let apiResponse = response.generate(true, 'This email is not registered', 403, null);
+                        reject(apiResponse);
+                    }
+                })
+        });
+    };
+
+    let generateToken = function (userData) {
+        return new Promise((resolve, reject) => {
+            tokenLib.generateToken(userData, (err, token) => {
+                if (err) {
+                    let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                    reject(apiResponse);
+                } else {
+                    resolve(token);
+                }
+            }, true);
+        });
+    };
+
+    let saveResetToken = function (token) {
+        return new Promise((resolve, reject) => {
+            User.updateOne({ email: req.body.email }, { passwordResetToken: token })
+                .exec((err, result) => {
+                    if (err) {
+                        let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                        reject(apiResponse);
+                    } else {
+                        resolve(token);
+                    }
+                });
+        });
+    };
+
+    findUser()
+        .then(generateToken)
+        .then(saveResetToken)
+        .then((token) => {
+            eventEmitter.emit('forgotPassEmail', userData.email, token);
+            let apiResponse = response.generate(false, 'Password reset email sent.', 200, null);
+            res.send(apiResponse);
+        })
+        .catch((err) => {
+            res.send(err);
+        });
+
+};
+
 module.exports = {
-    signup: signup
+    signup: signup,
+    login: login,
+    forgotPassword: forgotPassword
 };
 
 
