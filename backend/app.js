@@ -36,3 +36,68 @@ app.use(routeLogger.logIp);
 app.use(errorHandlers.globalErrorHandler);
 
 // routing imports
+let routePath = './app/routes';
+fs.readdirSync(routePath).forEach((file) => {
+    if (file.indexOf('js') >= 0) {
+        require(routePath + '/' + file).setRoutes(app);
+    }
+});
+
+// not found error handler
+app.use(errorHandlers.globalNotFoundHandler);
+
+// listening to server
+server.listen(config.port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        logger.error(error.code + ' not equal listen', 'serverOnErrorHandler', 10);
+        throw error;
+    }
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            logger.error(error.code + ':elevated priviledges required', 'serverOnErrorHandler', 10);
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            logger.error(error.code + ':port is already in use.', 'serverOnErrorHandler', 10);
+            process.exit(1);
+            break;
+        default:
+            logger.error(error.code + ':some unknown error occured', 'serverOnErrorHandler', 10);
+            throw error;
+    }
+}
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    ('Listening on ' + bind);
+    logger.info('Server listening on port ' + addr.port, 'serverOnListeningHandler', 10);
+    let db = mongoose.connect(config.database.url, { useNewUrlParser: true });
+}
+
+process.on('unhandledRejection', (reason, p) => {
+    console.log('Unhandled rejection at: Promise', p, 'reason:', reason);
+    // application specific logging, throwing an error, or other logic here
+});
+
+// mongoose event handlers
+mongoose.connection.on('open', (err) => {
+    if (err) {
+        console.log("Database error");
+    } else {
+        console.log('Connected to DB');
+    }
+});
+
+mongoose.connection.on('error', (err) => {
+    console.log("Error connecting to DB");
+    console.log(err);
+});
