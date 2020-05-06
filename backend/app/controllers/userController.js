@@ -255,10 +255,32 @@ let forgotPassword = function () {
 
 };
 
+
+let updatePassword = function (req, res) {
+    // verify if new password is valid or not
+    if (req.body.password && validationLib.isValidPassword(req.body.password)) {
+        // update the password and clear the password reset token for further use
+        User.updateOne({ userId: req.user.userId }, { password: passwordLib.encryptPassword(req.body.password), passwordResetToken: '' })
+            .exec((err, result) => {
+                if (err) {
+                    let apiResponse = response.generate(true, 'Internal server error', 500, null);
+                    res.send(apiResponse);
+                } else {
+                    let apiResponse = response.generate(false, 'Password updated', 200, null);
+                    res.send(apiResponse);
+                }
+            });
+    } else {
+        let apiResponse = response.generate(true, 'New password must be atleast 8 characters.', 500, null);
+        res.send(apiResponse);
+    }   
+};
+
 module.exports = {
     signup: signup,
     login: login,
-    forgotPassword: forgotPassword
+    forgotPassword: forgotPassword,
+    updatePassword: updatePassword
 };
 
 
