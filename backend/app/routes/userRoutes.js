@@ -21,6 +21,9 @@ let setRoutes = function (app) {
 
     // forgot password url
     app.post(baseUrl + '/forgot-password', userController.forgotPassword);
+
+    // update password url
+    app.post(baseUrl + '/update-password', routeMiddleware.verifyPassResetToken, userController.updatePassword);
 }
 
 module.exports = {
