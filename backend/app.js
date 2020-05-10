@@ -14,8 +14,9 @@ const config = require('./config/appConfig');
 const errorHandlers = require('./app/middlewares/appErrorHandler');
 const routeLogger = require('./app/middlewares/routeLogger');
 
-// importing logger Lib
+// importing Libs
 const logger = require('./app/libs/loggerLib');
+const socketLib = require('./app/libs/socketLib');
 
 const app = express();
 const server = http.createServer(app);
@@ -53,6 +54,8 @@ fs.readdirSync(routePath).forEach((file) => {
 
 // not found error handler
 app.use(errorHandlers.globalNotFoundHandler);
+
+socketLib.setSocketServer(server);
 
 // listening to server
 server.listen(config.port);
