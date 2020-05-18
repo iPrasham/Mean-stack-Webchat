@@ -1,0 +1,89 @@
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-purple">
+        <h5 class="modal-title" id="modal-label">Forgot Password</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #createEdit="ngForm" ngNativeValidate>
+          <label for="regEmail">Registered Email</label>
+          <input #registerMail="ngModel" class="form-control" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+                  type="text" id="regEmail" [(ngModel)]="registeredEmail" name="registeredEmail" placeholder="Enter email address">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button [disabled]="registerMail.invalid" id="save-button" type="button" class="btn bg-purple" 
+                data-dismiss="modal" (click)="resetPassword()">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fluid-container">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-6 my-3 my-md-5">
+        <h1>Sign Up</h1>
+        <form #signupForm="ngForm" (ngSubmit)="signup()" ngNativeValidate>
+          <div class="form-group">
+            <label for="firstname">First Name</label>
+            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name"
+                   pattern="[A-Za-z]+" [(ngModel)]="firstname" #firstN="ngModel" required>
+          </div>
+          <div class="form-group">
+            <label for="lastname">Last Name</label>
+            <input type="text" class="form-control" name="lastname" id="lastname" placeholder="Enter last name"
+                   [(ngModel)]="lastame" #lastN="ngModel">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" name="signupEmail" id="email" class="form-control" placeholder="Enter email address"
+                   pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" [(ngModel)]="signupEmail" #signupMail="ngModel" required> 
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="signupPassword" id="password" class="form-control" placeholder="Enter password"
+                   pattern="^[A-Za-z0-9]\w{7,}$" [(ngModel)]="signupPassword" #signupPass="ngModel" required>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" class="form-control" name="confirmPassword" id="confirm-password" placeholder="Confirm Password"
+                   [disabled]="!signupPass.value||signupPass.invalid" [pattern]="signupPass.value" [(ngModel)]="confirmPassword" 
+                   #confirmPass="ngModel" required>
+          </div>
+          <input type="submit" value="Register" class="btn bg-purple"
+                 [disabled]="signupPass.pristine || signupMail.pristine || signupPass.invalid || signupMail.invalid
+                            || firstN.invalid || showloader || confirmPass.pristine || confirmPass.invalid">
+        </form>
+      </div>
+
+      <div class="col-12 col-md-6 my-3 my-md-5">
+        <h1>Login</h1>
+        <form #loginForm="ngForm" (ngSubmit)="login()" ngNativeValidate>
+          <div class="form-group">
+            <label for="lemail">Email</label>
+              <input type="text" class="form-control" name='loginEmail' id="lemail" placeholder="Enter email"
+                     pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" [(ngModel)]='loginEmail' #loginMail="ngModel" required>
+          </div>
+          <div class="form-group">
+            <label for="lpassword">Password</label>
+            <input class="form-control" id="lpassword" placeholder="Enter password" type="password"
+                   pattern="^[A-Za-z0-9]\w{7,}$" [(ngModel)]='loginPassword' #loginPass="ngModel" name='loginPassword' required>
+          </div>
+          <input  type="submit" value="Log In" class="btn bg-purple" [disabled]="loginPass.pristine || loginMail.pristine || loginPass.invalid || loginMail.invalid || showloader">
+          <span id="forgot-pass" data-toggle="modal" data-target="#modal" title="Click to send password reset email to your registered email id">
+            Forgot Password?
+          </span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
