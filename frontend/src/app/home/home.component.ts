@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { ApiService } from '../api.service';
+import { HelperService } from '../helper.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +21,7 @@ export class HomeComponent implements OnInit {
   public showloader: boolean = false;
   public registeredEmail: String;
 
-  constructor() { }
+  constructor(private api: ApiService, private helper: HelperService, private router: Router) { }
 
   ngOnInit() {
   }
