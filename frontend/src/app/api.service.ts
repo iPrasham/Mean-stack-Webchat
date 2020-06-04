@@ -14,7 +14,7 @@ export class ApiService {
 
   // user related apis
   login (email: String, password: String) {
-    this.http.post(this.userUrl + '/login', { email: email, password: password });
+    return this.http.post(this.userUrl + '/login', { email: email, password: password });
   }
 
   signup (email: String, password: String, firstname: String, lastname?: String) {
