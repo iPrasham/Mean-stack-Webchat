@@ -16,16 +16,16 @@ const Auth = mongoose.model('Auth');
 
 // signup handler
 let signup = function (req, res) {
-    
+
     // validating user input
     let verifyUserInput = function () {
         return new Promise((resolve, reject) => {
-            if(!validationLib.isValidEmail(req.body.email)) {
+            if (!validationLib.isValidEmail(req.body.email)) {
                 let apiResponse = response.generate(true, "Invalid Email Address", 403, null);
                 reject(apiResponse);
             }
 
-            if(req.body.password == undefined || !validationLib.isValidPassword(req.body.password)) {
+            if (req.body.password == undefined || !validationLib.isValidPassword(req.body.password)) {
                 let apiResponse = response.generate(true, "Invalid password pattern. Password should be minimum 8 characters and start with an alphabet or a number", 403, null);
                 reject(apiResponse);
             }
@@ -40,17 +40,17 @@ let signup = function (req, res) {
             User.findOne({ email: req.body.email })
                 .lean()
                 .exec((err, result) => {
-                    if(err){
+                    if (err) {
                         logger.error(err.message, "User Signup: check existing user", 5);
                         let apiResponse = response.generate(true, "Some error occured.", 500, null);
                         reject(apiResponse);
-                    } else if(result) {
+                    } else if (result) {
                         let apiResponse = response.generate(true, "Email already registered.", 403, null);
                         reject(apiResponse);
                     } else {
                         resolve();
                     }
-            });
+                });
         });
     };
 
@@ -64,7 +64,7 @@ let signup = function (req, res) {
                 userId: shortId.generate(),
                 password: passwordLib.encryptPassword(req.body.password)
             });
-            
+
             user.save((err, result) => {
                 if (err) {
                     let apiResponse;
@@ -109,8 +109,8 @@ let login = function (req, res) {
 
     let validateAndFind = function () {
         return new Promise((resolve, reject) => {
-            if(req.body.email && req.body.password) {
-                User.findOne({ email: req.body.email})
+            if (req.body.email && req.body.password) {
+                User.findOne({ email: req.body.email })
                     .select("firstname lastname email userId password")
                     .lean()
                     .exec((err, result) => {
@@ -159,7 +159,7 @@ let login = function (req, res) {
     };
 
     let saveToken = function (token) {
-        return new Promise((reject, resolve) => {
+        return new Promise((resolve, reject) => {
             let auth = new Auth({
                 authToken: token
             });
@@ -171,7 +171,7 @@ let login = function (req, res) {
                 } else {
                     resolve(token);
                 }
-            }); 
+            });
         });
     };
 
@@ -179,10 +179,7 @@ let login = function (req, res) {
         .then(getToken)
         .then(saveToken)
         .then((token) => {
-            let apiResponse = response.generate(false, 
-                                                'User logged in',
-                                                200,
-                                                { authToken: token, userId: userData.userId, firstname: userData.firstname, lastname: userData.lastname });
+            let apiResponse = response.generate(false, 'User logged in', 200, { authToken: token, userId: userData.userId, firstname: userData.firstname, lastname: userData.lastname });
             res.send(apiResponse);
         })
         .catch((err) => {
@@ -273,7 +270,7 @@ let updatePassword = function (req, res) {
     } else {
         let apiResponse = response.generate(true, 'New password must be atleast 8 characters.', 500, null);
         res.send(apiResponse);
-    }   
+    }
 };
 
 module.exports = {

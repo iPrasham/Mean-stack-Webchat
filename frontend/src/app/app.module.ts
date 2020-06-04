@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { from } from 'rxjs';
@@ -24,14 +25,15 @@ import { ChatComponent } from './chat/chat.component';
     RouterModule.forRoot([
       { path: 'home', component: HomeComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: 'chat', component: ChatComponent, pathMatch: 'full'}
+      { path: 'chat', component: ChatComponent, pathMatch: 'full' }
     ]),
     FormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    MatSidenavModule
+    MatSidenavModule,
+    HttpClientModule
   ],
-  providers: [ ApiService, HelperService ],
+  providers: [ApiService, HelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

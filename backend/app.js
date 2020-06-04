@@ -16,7 +16,6 @@ const routeLogger = require('./app/middlewares/routeLogger');
 
 // importing Libs
 const logger = require('./app/libs/loggerLib');
-const socketLib = require('./app/libs/socketLib');
 
 const app = express();
 const server = http.createServer(app);
@@ -25,7 +24,7 @@ const server = http.createServer(app);
 app.use(bodyparser.json());
 
 // parsing only urlencoded bodies
-app.use(bodyparser.urlencoded({ extended: false}));
+app.use(bodyparser.urlencoded({ extended: false }));
 
 // securing express app through helmet, i.e. setting various headers
 app.use(helmet());
@@ -55,6 +54,8 @@ fs.readdirSync(routePath).forEach((file) => {
 // not found error handler
 app.use(errorHandlers.globalNotFoundHandler);
 
+// importing socket lib after importing models as it requires chat model
+const socketLib = require('./app/libs/socketLib');
 socketLib.setSocketServer(server);
 
 // listening to server
