@@ -9,24 +9,29 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { AppComponent } from './app.component';
 import { from } from 'rxjs';
 import { HomeComponent } from './home/home.component';
+import { ApiService } from './api.service';
+import { HelperService } from './helper.service';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot([
       { path: 'home', component: HomeComponent },
-      { path: '', redirectTo: 'home', pathMatch: 'full' }
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'chat', component: ChatComponent, pathMatch: 'full'}
     ]),
     FormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     MatSidenavModule
   ],
-  providers: [],
+  providers: [ ApiService, HelperService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
