@@ -15,3 +15,7 @@ let setRoutes = function (app) {
 
     app.post(baseUrl + '/chat-list', routeMiddleware.verifyAuthToken, chatController.listChat);
 };
+
+module.exports = {
+    setRoutes: setRoutes
+};

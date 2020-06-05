@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  login () {
+  login() {
     this.showloader = true;
     this.api.login(this.loginEmail, this.loginPassword).subscribe((res: any) => {
       this.showloader = false;
@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  signup () {
+  signup() {
     if (!(this.confirmPassword == this.signupPassword)) {
       this.toastr.error('Password mismatch', 'Error');
     } else {
@@ -62,5 +62,17 @@ export class HomeComponent implements OnInit {
         }
       });
     }
+  }
+
+  resetPassword() {
+    this.showloader = true;
+    this.api.forgotPassword(this.registeredEmail).subscribe((res: any) => {
+      this.showloader = false;
+      if (res.error) {
+        this.toastr.error(res.message, 'Error');
+      } else {
+        this.toastr.success(res.message, 'Success');
+      }
+    });
   }
 }
