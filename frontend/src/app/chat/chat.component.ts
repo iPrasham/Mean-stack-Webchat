@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { HelperService } from '../helper.service';
 import { ToastrService } from 'ngx-toastr';
+import * as $ from 'jquery';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
