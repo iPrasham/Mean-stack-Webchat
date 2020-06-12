@@ -4,6 +4,7 @@ import { HelperService } from '../helper.service';
 import { ToastrService } from 'ngx-toastr';
 import * as $ from 'jquery';
 import { ActivatedRoute } from '@angular/router';
+import { SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-chat',
@@ -34,9 +35,22 @@ export class ChatComponent implements OnInit {
   public prevName: String;
   public prevActive: String;
 
-  constructor() { }
+  constructor(private socket: SocketService, private api: ApiService, private helper: HelperService, private toastr: ToastrService, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    console.log('Chat Init');
+
+    this.helper.verifyUserLogin();
+
+    this.userId = localStorage.getItem('userId');
+    let firstname = localStorage.getItem('firstname');
+    let lastname = localStorage.getItem('lastname') ? localStorage.getItem('lastname') : '';
+    this.username = firstname + lastname;
+
+    this.username = this.username ? this.username.trim() : undefined;
+
+    // if user is present
+
   }
 
 }

@@ -23,4 +23,97 @@ export class SocketService {
       });
     });
   }
+
+  setUser() {
+    this.socket.emit('setUser', this.authToken);
+  }
+
+  authError() {
+    return new Observable((obs) => {
+      this.socket.on('authError', () => {
+        obs.next()
+      });
+    });
+  }
+
+  joinRoom(roomId: String) {
+    this.socket.emit('joinRoom', roomId);
+  }
+
+  leaveRoom() {
+    this.socket.emit('leaveRoom');
+  }
+
+  userJoin() {
+    return new Observable((obs) => {
+      this.socket.on('userJoin', (name) => {
+        obs.next(name);
+      });
+    });
+  }
+
+  userLeft() {
+    return new Observable((obs) => {
+      this.socket.on('userLeft', (name) => {
+        obs.next(name);
+      });
+    });
+  }
+
+  sendChat(message: String) {
+    this.socket.emit('newChat', message);
+  }
+
+  newChat() {
+    return new Observable((obs) => {
+      this.socket.on('newChat', (message) => {
+        obs.next(message);
+      });
+    });
+  }
+
+  typing() {
+    this.socket.emit('typing');
+  }
+
+  listenTyping() {
+    return new Observable((obs) => {
+      this.socket.on('typing', (name) => {
+        obs.next(name);
+      });
+    });
+  }
+
+  roomNameUpdated() {
+    return new Observable((obs) => {
+      this.socket.on('roomNameUpdated', (name) => {
+        obs.next(name);
+      });
+    });
+  }
+
+  roomRemoved() {
+    return new Observable((obs) => {
+      this.socket.on('roomRemoved', () => {
+        obs.next();
+      });
+    });
+  }
+
+  roomListUpdated() {
+    return new Observable((obs) => {
+      this.socket.on('roomListUpdated', () => {
+        obs.next();
+      });
+    });
+  }
+
+  notInARoom() {
+    return new Observable((obs) => {
+      this.socket.on('notInARoom', () => {
+        obs.next();
+      });
+    });
+  }
+
 }
