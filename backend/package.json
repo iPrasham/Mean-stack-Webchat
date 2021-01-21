@@ -19,6 +19,6 @@
     "nodemailer": "^4.6.7",
     "pino": "^4.17.5",
     "short-id": "0.1.0-1",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.4.0"
   }
 }
