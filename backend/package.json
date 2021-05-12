@@ -16,7 +16,7 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
     "mongoose": "^5.2.5",
-    "nodemailer": "^4.6.7",
+    "nodemailer": "^6.4.16",
     "pino": "^4.17.5",
     "short-id": "0.1.0-1",
     "socket.io": "^2.1.1"
